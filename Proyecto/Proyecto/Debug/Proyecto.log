@@ -1,0 +1,8 @@
+﻿  main.cpp
+c1xx : warning C4199: two-phase name lookup is not supported for C++/CLI, C++/CX, or OpenMP; use /Zc:twoPhase-
+c:\users\b64390\desktop\proyecto\proyecto\main.cpp(37): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  Simulador.cpp
+c1xx : warning C4199: two-phase name lookup is not supported for C++/CLI, C++/CX, or OpenMP; use /Zc:twoPhase-
+c:\users\b64390\desktop\proyecto\proyecto\simulador.cpp(26): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Generating Code...
+  Proyecto.vcxproj -> C:\Users\b64390\Desktop\Proyecto\Debug\Proyecto.exe
