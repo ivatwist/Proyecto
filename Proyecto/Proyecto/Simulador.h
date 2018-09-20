@@ -17,11 +17,12 @@ public:
 	vector<vector<list<Persona>>> matriz;
 
 	Simulador();
-	Simulador(int dimension, int num_personas, int num_infectadas);
-	void llenar_Matriz(int dimension, int num_personas, int num_infectadas);
+	Simulador(int dimension, int num_personas, double num_infectadas);
+	void llenar_Matriz(int dimension, int num_personas, double num_infectadas);
 	void mover(int dimension);
 	void resizeVec(int dimension);
-	void Imprimir(vector<vector<list<Persona>>> matriz, int dimension);
+	void imprimir(vector<vector<list<Persona>>> matriz, int dimension);
+	void verificarInfectado(int num_personas, int, double);
 	~Simulador();
 };
 

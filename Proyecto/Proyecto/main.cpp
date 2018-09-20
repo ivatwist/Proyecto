@@ -38,9 +38,12 @@ int main()
 	Simulador m2= Simulador();
 	m2.resizeVec(dimension);
 	cout << "\tM1" << endl;
-	m1.Imprimir(m1.matriz, dimension);
-	cout <<endl<<endl<< "\tM2" << endl;
-	m2.Imprimir(m2.matriz, dimension);
+	m1.imprimir(m1.matriz, dimension);
+	m1.verificarInfectado(num_personas, dimension, potencia);
+	cout << endl<<endl<<"Verificacion:" << endl << endl;
+	m1.imprimir(m1.matriz, dimension);
+	//cout <<endl<<endl<< "\tM2" << endl;
+	//m2.imprimir(m2.matriz, dimension);
 
 	cin >> tics;
 
