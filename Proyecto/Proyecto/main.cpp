@@ -34,13 +34,13 @@ int main()
 	//cout << "\n  Duracion de la simulacion: ";
 	//cin >> tics;
 
-	Simulador s = Simulador(dimension, num_personas, num_infectadas);
-	vector<vector<list<Persona>>> m2;
-	cout << "S" << endl;
-	s.Imprimir(s.matriz, dimension);
-	cout <<endl<<endl<< "M2" << endl;
-	m2 = s.matriz;
-	s.Imprimir(m2, dimension);
+	Simulador m1 = Simulador(dimension, num_personas, num_infectadas);
+	Simulador m2= Simulador();
+	m2.resizeVec(dimension);
+	cout << "\tM1" << endl;
+	m1.Imprimir(m1.matriz, dimension);
+	cout <<endl<<endl<< "\tM2" << endl;
+	m2.Imprimir(m2.matriz, dimension);
 
 	cin >> tics;
 
