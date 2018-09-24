@@ -37,19 +37,26 @@ int main()
 
 	Simulador m1 = Simulador(dimension, num_personas, num_infectadas);
 
+	cout << endl << "\t\t\t\tM1" << endl;
+	
+
 	for(int dias=0; dias<tics; ++dias)
 	{
-		cout << endl << endl << "\tM1" << endl;
+		cout << endl << endl << "\t------------------------------ Dia " << dias <<"------------------------------"<< endl << endl;
+		//cout << endl << "\tM1" << endl;
+		//m1.imprimir(m1.matriz, dimension);
+		//m1.verificarEstado(num_personas, dimension, potencia, muerte, recuperacion);
+		//cout << endl << endl << "Verificacion:" << endl << endl;
+		//m1.imprimir(m1.matriz, dimension);
 		m1.imprimir(m1.matriz, dimension);
-		m1.verificarInfectado(num_personas, dimension, potencia);
-		cout << endl << endl << "Verificacion:" << endl << endl;
-		m1.imprimir(m1.matriz, dimension);
-		cout << "\t\t\t\t Dia "<<dias<<endl<<endl;
 		Simulador *m2 = new Simulador(dimension);
 		m1.mover(num_personas, dimension, m2->matriz);
-		cout << endl << endl << "\tM2" << endl;
+		cout << endl << "\t\t\t\tM2" << endl;
+		cout << "Movimiento:\n\n";
 		m2->imprimir(m2->matriz, dimension);
-		m2->verificarInfectado(num_personas, dimension, potencia);
+		m2->verificarEstado(num_personas, dimension, potencia, muerte, recuperacion);
+		cout << "Verificacion:\n\n";
+		m2->imprimir(m2->matriz, dimension);
 		m1.matriz = m2->matriz;
 		delete m2;
 	}

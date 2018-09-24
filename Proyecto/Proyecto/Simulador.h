@@ -28,7 +28,8 @@ public:
 	void mover(int num_personas, int dimension, vector<vector<list<Persona>>>&);
 	void resizeVec(int dimension);
 	void imprimir(vector<vector<list<Persona>>> matriz, int dimension);
-	void verificarInfectado(int num_personas, int, double);
+	//void verificarInfectado(int num_personas, int, double);
+	void verificarEstado(int num_personas, int, double, double, double);
 	~Simulador();
 };
 
