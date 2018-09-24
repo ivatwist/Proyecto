@@ -93,20 +93,20 @@ void Simulador::imprimir(vector<vector<list<Persona>>> m, int dimension)
 	//	cout << endl;
 	//}
 
-	int imprimidos;
+	int impresos;
 	for (int i = 0; i<dimension; ++i)
 	{
 		for (int j = 0; j<dimension; ++j)
 		{
-			imprimidos = 0;
+			impresos = 0;
 			//cout << "c " << i << " f " << j << ": ";
 			for (auto &it : m[i][j])
 			{
 				cout << it.estado <<" ";
-				++imprimidos;
+				++impresos;
 				//cout << m[i][j].size() << " ";
 			}
-			for (int p = 0; p < 7-imprimidos; ++p)
+			for (int p = 0; p < 7- impresos; ++p)
 				cout << "  ";
 			cout << "\|";
 		}
@@ -118,8 +118,8 @@ void Simulador::imprimir(vector<vector<list<Persona>>> m, int dimension)
 
 
 }
-
-void Simulador::verificarInfectado(int num_personas, int dimension, double potencia)
+//void Simulador::verificarInfectado(int num_personas, int dimension, double potencia)
+void Simulador::verificarEstado(int num_personas, int dimension, double potencia, double muerte, double recuperacion)
 {
 	/* 0-Muerto		1-Inmune		2-Sano		3-Infectado */
 	default_random_engine generator;
@@ -134,7 +134,7 @@ void Simulador::verificarInfectado(int num_personas, int dimension, double poten
 			{
 				if (it.estado == 3)		//Si está infectado
 				{
-					for (auto &it2 : matriz[fila][col])
+					for (auto &it2 : matriz[fila][col])		//Ciclo para infectar los sanos
 					{
 						//double f = (rand() % 100)/ potencia;
 						f = distribution(generator);
@@ -143,6 +143,16 @@ void Simulador::verificarInfectado(int num_personas, int dimension, double poten
 						{
 							it2.set_estado(3);		//Se actualiza el estado de la persona a "INFECTADO"
 						}
+					}
+					f = distribution(generator);
+					if (f < muerte)		//Si la probabildad de muerte se cumple, entonces el enfermo se muere
+					{
+						it.set_estado(0);		//Se actualiza el estado de la persona a "MUERTO"
+					}
+					f = distribution(generator);
+					if (f < recuperacion && it.estado==3)		//Si la probabildad de recuperación se cumple, entonces el enfermo se muere
+					{
+						it.set_estado(1);		//Se actualiza el estado de la persona a "INMUNE"
 					}
 				}
 			}
@@ -161,17 +171,21 @@ void Simulador::mover(int num_personas, int dimension, vector<vector<list<Person
 		{
 			for (auto &it : matriz[fila][col])
 			{
-				rfila = rand() % 3 - 1;
-				rcolumna = rand() % 3 - 1;
-				if (rfila - fila < 0)
-					rfila = dimension - 1;
-				if (fila + rfila >= dimension)
-					rfila = 0;
-				if (rcolumna - col < 0)
-					rcolumna = dimension - 1;
-				if (col + rcolumna >= dimension)
-					rcolumna = 0;
-				m2[fila+rfila][col+rcolumna].push_back(Persona(it.estado));
+				
+					rfila = rand() % 3 - 1;
+					rcolumna = rand() % 3 - 1;
+					if (rfila - fila < 0)
+						rfila = dimension - 1;
+					if (fila + rfila >= dimension)
+						rfila = 0;
+					if (rcolumna - col < 0)
+						rcolumna = dimension - 1;
+					if (col + rcolumna >= dimension)
+						rcolumna = 0;
+					if (it.estado != 0)
+					m2[fila + rfila][col + rcolumna].push_back(Persona(it.estado));
+					else
+						m2[fila][col].push_back(Persona(0));
 			}
 		}
 	}
