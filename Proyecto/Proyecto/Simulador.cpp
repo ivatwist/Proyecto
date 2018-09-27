@@ -125,7 +125,7 @@ void Simulador::imprimir(vector<vector<list<Persona>>> m, int dimension)
 
 }
 //void Simulador::verificarInfectado(int num_personas, int dimension, double potencia)
-void Simulador::verificarEstado(int num_personas, int dimension, double potencia, double muerte, double recuperacion)
+void Simulador::verificarEstado(int num_personas, int dimension, double potencia, int muerte, double recuperacion)
 {
 	/* 0-Muerto		1-Inmune		2-Sano		3-Infectado */
 	default_random_engine generator;
@@ -138,8 +138,9 @@ void Simulador::verificarEstado(int num_personas, int dimension, double potencia
 		{
 			for (auto &it: matriz[fila][col])
 			{
-				if (it.estado == 3)		//Si está infectado
+				if (it.estado == 3 )		//Si está infectado
 				{
+					it.tiempo = it.tiempo + 1;
 					for (auto &it2 : matriz[fila][col])		//Ciclo para infectar los sanos
 					{
 						//double f = (rand() % 100)/ potencia;
@@ -150,16 +151,20 @@ void Simulador::verificarEstado(int num_personas, int dimension, double potencia
 							it2.set_estado(3);		//Se actualiza el estado de la persona a "INFECTADO"
 						}
 					}
-					f = distribution(generator);
-					if (f < muerte)		//Si la probabildad de muerte se cumple, entonces el enfermo se muere
+					//cout << "t: " << it.tiempo << endl;
+					if (it.tiempo== muerte)		//Si la probabildad de muerte se cumple, entonces el enfermo se muere
 					{
 						it.set_estado(0);		//Se actualiza el estado de la persona a "MUERTO"
+						cout << "\nse muere\n";
 					}
+					
 					f = distribution(generator);
-					if (f < recuperacion && it.estado==3)		//Si la probabildad de recuperación se cumple, entonces el enfermo se muere
+					if (f < recuperacion && it.estado==3 && it.tiempo != 0)		//Si la probabildad de recuperación se cumple, entonces el enfermo se hace o
 					{
 						it.set_estado(1);		//Se actualiza el estado de la persona a "INMUNE"
+						cout << "\nse curo\n";
 					}
+					//it.set_tiempo(it.tiempo + 1);
 				}
 			}
 		}
@@ -203,7 +208,7 @@ void Simulador::mover(int num_personas, int dimension, vector<vector<list<Person
 						m2[fila][col].push_back(Persona(0));*/
 
 					if (it.estado != 0)
-						m2[(dimension+fila+rfila)%dimension][(dimension+col + rcolumna)%dimension].push_back(Persona(it.estado));
+						m2[(dimension+fila+rfila)%dimension][(dimension+col + rcolumna)%dimension].push_back(Persona(it.estado, it.tiempo));
 					else
 						m2[fila][col].push_back(Persona(0));
 			}

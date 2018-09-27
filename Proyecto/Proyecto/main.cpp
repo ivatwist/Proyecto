@@ -6,8 +6,8 @@ using namespace std;
 
 int main()
 {
-	int num_personas, dimension, tics;
-	double potencia, recuperacion, muerte, num_infectadas;
+	int num_personas, dimension, tics, muerte;
+	double potencia, recuperacion, num_infectadas;
 	cout << "\t\t INFEKTION" << endl << endl;
 	cout << "  Digite la cantidad de personas: ";
 	cin >> num_personas;
@@ -15,7 +15,7 @@ int main()
 	cin >> potencia;
 	cout << "\n  Probabilidad de recuperacion: ";
 	cin >> recuperacion;
-	cout << "\n  Probabilidad de muerte: ";
+	cout << "\n  Dias antes de morir: ";
 	cin >> muerte;
 	cout << "\n  Porcentaje original infectados: ";
 	cin >> num_infectadas;
