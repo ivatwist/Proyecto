@@ -31,6 +31,12 @@ void Simulador::llenar_Matriz(int dimension, int num_personas, double num_infect
 	int f = (num_personas*num_infectadas);
 	cout << "f: "<<f << endl;
 	//Se llena la matriz primero con la proporcion de infectados correspondiente
+	/*for(int iter = 0; iter <num_personas; ++iter)
+	{
+		fila = rand() % dimension;
+		colum = rand() % dimension;
+		matriz[fila][colum].push_back(Persona(iter));
+	}*/
 	for (int iter = 0; iter <f; ++iter)
 	{
 		fila = rand() % dimension;
@@ -162,28 +168,42 @@ void Simulador::verificarEstado(int num_personas, int dimension, double potencia
 
 void Simulador::mover(int num_personas, int dimension, vector<vector<list<Persona>>>& m2)
 {
-	srand(time(NULL));
+	default_random_engine generator;
+	uniform_int_distribution<int> distribution(0,1);
+	
 	int rfila, rcolumna;
 	int chequeados = 0;
 	for (int fila = 0; fila < dimension && chequeados < num_personas; ++fila)
 	{
+		
 		for (int col = 0; col < dimension && chequeados < num_personas; ++col)
 		{
+		
 			for (auto &it : matriz[fila][col])
 			{
 				
-					rfila = rand() % 3 - 1;
-					rcolumna = rand() % 3 - 1;
-					if (rfila - fila < 0)
+					rfila =  distribution(generator);
+					rcolumna =  distribution(generator);
+					rfila ? 0 : rfila =-1;
+					rcolumna ? 0 : rcolumna =-1;
+					//cout << "x " << rcolumna << " y " << rfila << endl;
+					
+					/*if (rfila + fila < 0)
 						rfila = dimension - 1;
 					if (fila + rfila >= dimension)
 						rfila = 0;
-					if (rcolumna - col < 0)
+					if (rcolumna + col < 0)
 						rcolumna = dimension - 1;
 					if (col + rcolumna >= dimension)
 						rcolumna = 0;
+
 					if (it.estado != 0)
-					m2[fila + rfila][col + rcolumna].push_back(Persona(it.estado));
+						m2[fila + rfila][col + rcolumna].push_back(Persona(it.estado));
+					else
+						m2[fila][col].push_back(Persona(0));*/
+
+					if (it.estado != 0)
+						m2[(dimension+fila+rfila)%dimension][(dimension+col + rcolumna)%dimension].push_back(Persona(it.estado));
 					else
 						m2[fila][col].push_back(Persona(0));
 			}
