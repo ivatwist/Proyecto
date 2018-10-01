@@ -1,11 +1,15 @@
 #include "Persona.h"
 #include "Simulador.h"
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
 int main()
 {
+	ofstream archivo;	archivo.open("Estadisticas.txt");
+	archivo.close();
+
 	int num_personas, dimension, tics, muerte;
 	double potencia, recuperacion, num_infectadas;
 	cout << "\t\t INFEKTION" << endl << endl;
@@ -54,12 +58,13 @@ int main()
 		cout << endl << "\t\t\t\tM2" << endl;
 		cout << "Movimiento:\n\n";
 		m2->imprimir(m2->matriz, dimension);
-		m2->verificarEstado(num_personas, dimension, potencia, muerte, recuperacion);
+		m2->verificarEstado(num_personas, dimension, potencia, muerte, recuperacion, dias);
 		cout << "Verificacion:\n\n";
 		m2->imprimir(m2->matriz, dimension);
 		m1.matriz = m2->matriz;
 		delete m2;
 	}
+	/**Imprimir estadisticas finales y matar a todos los infectados*/
 	cin >> tics;
 
 	return 0;
