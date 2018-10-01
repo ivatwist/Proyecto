@@ -11,6 +11,7 @@
 #include <time.h>
 #include <math.h>
 #include <random>
+#include <fstream>
 
 using namespace  std;
 
@@ -29,7 +30,8 @@ public:
 	void resizeVec(int dimension);
 	void imprimir(vector<vector<list<Persona>>> matriz, int dimension);
 	//void verificarInfectado(int num_personas, int, double);
-	void verificarEstado(int num_personas, int, double, double, double);
+	void verificarEstado(int num_personas, int, double&, int, double, int);
+	void Estadisticas(int, int, int, int, int, int);
 	~Simulador();
 };
 
