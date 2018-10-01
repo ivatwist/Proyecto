@@ -30,7 +30,7 @@ void Simulador::llenar_Matriz(int dimension, int num_personas, double num_infect
 	srand(time(NULL));
 	int fila, colum, n;
 	int f = (num_personas*num_infectadas);
-	cout << "f: "<<f << endl;
+	//cout << "f: "<<f << endl;
 	//Se llena la matriz primero con la proporcion de infectados correspondiente
 	/*for(int iter = 0; iter <num_personas; ++iter)
 	{
@@ -38,21 +38,26 @@ void Simulador::llenar_Matriz(int dimension, int num_personas, double num_infect
 		colum = rand() % dimension;
 		matriz[fila][colum].push_back(Persona(iter));
 	}*/
-	for (int iter = 0; iter <f; ++iter)
-	{
-		fila = rand() % dimension;
-		colum = rand() % dimension;
-		matriz[fila][colum].push_back(Persona(3));
-	}
-	for (int iter = 0; iter < num_personas-num_personas*num_infectadas; ++iter)
-	{
-		fila = rand() % dimension;
-		colum = rand() % dimension;
-		n = rand() % 2+1;
-		//cout << "f " << fila << " c " << colum <<" n "<<n<< endl;
-		matriz[fila][colum].push_back(Persona(n));
-	}
-	
+#pragma omp parallel for
+		for (int iter = 0; iter < f; ++iter)
+		{
+			fila = rand() % dimension;
+			colum = rand() % dimension;
+			matriz[fila][colum].push_back(Persona(3));
+		}
+		this->enfermos = f;
+		int nn= num_personas - num_personas * num_infectadas;
+#pragma omp parallel for
+		for (int iter = 0; iter < nn; ++iter)
+		{
+			fila = rand() % dimension;
+			colum = rand() % dimension;
+			n = rand() % 2 + 1;
+			//cout << "f " << fila << " c " << colum <<" n "<<n<< endl;
+			matriz[fila][colum].push_back(Persona(n));
+			if (n == 2)
+				this->sanos++;
+		}
 }
 
 /*
@@ -61,6 +66,7 @@ void Simulador::llenar_Matriz(int dimension, int num_personas, double num_infect
 void Simulador::resizeVec(int dimension)
 {
 	matriz.resize(dimension);
+
 	for (auto &it : matriz)
 	{
 		it.resize(dimension);
@@ -135,10 +141,12 @@ void Simulador::verificarEstado(int num_personas, int dimension, double& potenci
 	int chequeados = 0;
 	int totalinfectados = 0, totalsanos=0, curados = 0, totalmuertos=0;
 
-	for (int fila = 0; fila < dimension && chequeados < num_personas; ++fila)
+#pragma omp parallel for
+
+	for (int fila = 0; fila < dimension /*&& chequeados < num_personas*/; ++fila)
 	{
-		
-		for (int col = 0; col < dimension && chequeados < num_personas; ++col)
+#pragma omp parallel for
+		for (int col = 0; col < dimension /*&& chequeados < num_personas*/; ++col)
 		{
 			int contaenfermos = 0;
 			for (auto &it: matriz[fila][col])
@@ -152,14 +160,14 @@ void Simulador::verificarEstado(int num_personas, int dimension, double& potenci
 				{
 					++totalinfectados;
 					contaenfermos = 0;
-					it.tiempo = it.tiempo + 1;
+					
 					for (auto &it2 : matriz[fila][col])		//Ciclo para infectar los sanos
 					{
 						if (it2.estado == 3)
 							++contaenfermos;
 					}
 					//contaenfermos = contaenfermos - 1;
-					cout << "\n\nNueva potencia: " << potencia * contaenfermos <<" Conta: "<< contaenfermos<<" [ "<<fila<<"] ["<<col<<"] "<< endl << endl;
+			//		cout << "\n\nNueva potencia: " << potencia * contaenfermos <<" Conta: "<< contaenfermos<<" [ "<<fila<<"] ["<<col<<"] "<< endl << endl;
 					for (auto &it2 : matriz[fila][col])		//Ciclo para infectar los sanos
 					{
 						//double f = (rand() % 100)/ potencia;
@@ -168,6 +176,7 @@ void Simulador::verificarEstado(int num_personas, int dimension, double& potenci
 						if (it2.estado == 2 && f < potencia*contaenfermos)		//Si está sano y el número generado es mayor igual al porcentaje
 						{
 							it2.set_estado(3);		//Se actualiza el estado de la persona a "INFECTADO"
+							cout << "\nse infecta\n";
 						}
 					}
 					//cout << "t: " << it.tiempo << endl;
@@ -175,6 +184,7 @@ void Simulador::verificarEstado(int num_personas, int dimension, double& potenci
 					{
 						it.set_estado(0);		//Se actualiza el estado de la persona a "MUERTO"
 						cout << "\nse muere\n";
+						++this->muertos;
 					}
 					
 					f = distribution(generator);
@@ -182,8 +192,10 @@ void Simulador::verificarEstado(int num_personas, int dimension, double& potenci
 					{
 						it.set_estado(1);		//Se actualiza el estado de la persona a "INMUNE"
 						++curados;
-						//cout << "\nse curo\n";
+						this->curados= this->curados+1;
+						cout << "\nse curo\n";
 					}
+					it.tiempo = it.tiempo + 1;
 					//it.set_tiempo(it.tiempo + 1);
 				}
 			}
@@ -199,11 +211,17 @@ void Simulador::Estadisticas(int num_personas, int totalmuertos, int curados, in
 	cout	<< "\t\t\t\t Personas infectadas \n\t Porcentaje: " << 1.0*totalinfectados / num_personas	<< "\t\t\t Cantidad actual: " << totalinfectados << endl
 			<< "\n\t\t\t\t Personas sanos \n\t Porcentaje : "	<< 1.0*totalsanos / num_personas		<< "\t\t\t Cantidad actual: " << totalsanos << endl
 			<< "\n\t\t\t\t Personas curados \n\t Porcentaje : " << 1.0*curados / num_personas			<< "\t\t\t Cantidad actual: " << curados << endl
-			<< "\n\t\t\t\t Personas muertas \n\t Porcentaje : " << 1.0*totalmuertos / num_personas		<< "\t\t\t Cantidad actual: " << totalmuertos << endl << endl;	ofstream archivo;	archivo.open("Estadisticas.txt", std::fstream::app);	archivo << "\n\n\t\t\t\t Dia " << dias << endl << endl
+			<< "\n\t\t\t\t Personas muertas \n\t Porcentaje : " << 1.0*totalmuertos / num_personas		<< "\t\t\t Cantidad actual: " << totalmuertos << endl << endl;
+
+	ofstream archivo;
+	archivo.open("Estadisticas.txt", std::fstream::app);
+	archivo << "\n\n\t\t\t\t Dia " << dias << endl << endl
 			<< "\t\t\t\t Personas infectadas \n\t Porcentaje: " << 1.0*totalinfectados / num_personas	<< "\t\t\t Cantidad actual: " << totalinfectados << endl
 			<< "\n\t\t\t\t Personas sanos \n\t Porcentaje : "	<< 1.0*totalsanos / num_personas		<< "\t\t\t Cantidad actual: " << totalsanos << endl
 			<< "\n\t\t\t\t Personas curados \n\t Porcentaje : " << 1.0*curados / num_personas			<< "\t\t\t Cantidad actual: " << curados << endl
-			<< "\n\t\t\t\t Personas muertas \n\t Porcentaje : " << 1.0*totalmuertos / num_personas		<< "\t\t\t Cantidad actual: " << totalmuertos << endl << endl;	archivo.close();
+			<< "\n\t\t\t\t Personas muertas \n\t Porcentaje : " << 1.0*totalmuertos / num_personas		<< "\t\t\t Cantidad actual: " << totalmuertos << endl << endl;
+	archivo.close();
+
 }
 
 void Simulador::mover(int num_personas, int dimension, vector<vector<list<Persona>>>& m2)
@@ -213,10 +231,11 @@ void Simulador::mover(int num_personas, int dimension, vector<vector<list<Person
 	
 	int rfila, rcolumna;
 	int chequeados = 0;
-	for (int fila = 0; fila < dimension && chequeados < num_personas; ++fila)
+#pragma omp parallel for
+	for (int fila = 0; fila < dimension /*&& chequeados < num_personas*/; ++fila)
 	{
-		
-		for (int col = 0; col < dimension && chequeados < num_personas; ++col)
+#pragma omp parallel for
+		for (int col = 0; col < dimension /*&& chequeados < num_personas*/; ++col)
 		{
 		
 			for (auto &it : matriz[fila][col])

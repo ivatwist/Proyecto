@@ -12,6 +12,7 @@
 #include <math.h>
 #include <random>
 #include <fstream>
+#include <omp.h>
 
 using namespace  std;
 
@@ -21,6 +22,8 @@ class Simulador
 public:
 	list<Persona> personas;
 	vector<vector<list<Persona>>> matriz;
+	int sanos=0, muertos = 0, curados = 0, enfermos = 0;
+
 
 	Simulador();
 	Simulador(int dimension);
