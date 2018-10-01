@@ -7,7 +7,8 @@ using namespace std;
 
 int main()
 {
-	ofstream archivo;	archivo.open("Estadisticas.txt");
+	ofstream archivo;
+	archivo.open("Estadisticas.txt");
 	archivo.close();
 
 	int num_personas, dimension, tics, muerte;
@@ -43,28 +44,37 @@ int main()
 
 	cout << endl << "\t\t\t\tM1" << endl;
 	
-
+//#pragma omp parallel for
 	for(int dias=0; dias<tics; ++dias)
 	{
+//#pragma omp  critical
 		cout << endl << endl << "\t------------------------------ Dia " << dias <<"------------------------------"<< endl << endl;
 		//cout << endl << "\tM1" << endl;
 		//m1.imprimir(m1.matriz, dimension);
 		//m1.verificarEstado(num_personas, dimension, potencia, muerte, recuperacion);
 		//cout << endl << endl << "Verificacion:" << endl << endl;
 		//m1.imprimir(m1.matriz, dimension);
-		m1.imprimir(m1.matriz, dimension);
+//#pragma omp  critical
+		//m1.imprimir(m1.matriz, dimension);
 		Simulador *m2 = new Simulador(dimension);
 		m1.mover(num_personas, dimension, m2->matriz);
-		cout << endl << "\t\t\t\tM2" << endl;
-		cout << "Movimiento:\n\n";
-		m2->imprimir(m2->matriz, dimension);
-		m2->verificarEstado(num_personas, dimension, potencia, muerte, recuperacion, dias);
-		cout << "Verificacion:\n\n";
-		m2->imprimir(m2->matriz, dimension);
+//#pragma omp  critical
+	//	{
+			//cout << endl << "\t\t\t\tM2" << endl;
+			//cout << "Movimiento:\n\n";
+			//m2->imprimir(m2->matriz, dimension); }
+		m2->verificarEstado(num_personas, dimension, potencia, muerte, recuperacion, dias); 
+//#pragma omp  critical
+		//{
+			//cout << "Verificacion:\n\n";
+			//m2->imprimir(m2->matriz, dimension); }
 		m1.matriz = m2->matriz;
 		delete m2;
 	}
 	/**Imprimir estadisticas finales y matar a todos los infectados*/
+	
+	cout << "\n\n\n\t\t\t\t ESTADISTICAS FINALES" << endl << endl;
+	m1.Estadisticas(num_personas, m1.muertos, m1.curados, m1.sanos, m1.enfermos, tics);
 	cin >> tics;
 
 	return 0;
