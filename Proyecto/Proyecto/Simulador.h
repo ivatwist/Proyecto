@@ -34,7 +34,8 @@ public:
 	void imprimir(vector<vector<list<Persona>>> matriz, int dimension);
 	//void verificarInfectado(int num_personas, int, double);
 	void verificarEstado(int num_personas, int, double&, int, double, int);
-	void Estadisticas(int, int, int, int, int, int);
+	void Estadisticas(int, int, int, int, int, int, int);
+	void obtenerCantidades(int, int&, int&);
 	void EstadisticasFinales(int);
 
 	~Simulador();
