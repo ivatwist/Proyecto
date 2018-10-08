@@ -43,10 +43,11 @@ int main()
 
 	Simulador m1 = Simulador(dimension, num_personas, num_infectadas);
 
-	cout << endl << "\t\t\t\tM1" << endl;
+	//cout << endl << "\t\t\t\tM1" << endl;
 	
+	m1.Estadisticas(num_personas, m1.muertos, m1.curados, m1.sanos, m1.enfermos, m1.enfermos, 0);
 //#pragma omp parallel for
-	for(int dias=0; dias<tics; ++dias)
+	for(int dias=1; dias<=tics; ++dias)
 	{
 //#pragma omp  critical
 		//cout << endl << endl << "\t------------------------------ Dia " << dias <<"------------------------------"<< endl << endl;
@@ -79,7 +80,7 @@ int main()
 		delete m2;
 	}
 	/**Imprimir estadisticas finales y matar a todos los infectados*/
-	
+	//FALTA Verificacion final
 	
 	m1.EstadisticasFinales(num_personas);
 	cin >> tics;

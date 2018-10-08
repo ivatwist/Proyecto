@@ -139,7 +139,7 @@ void Simulador::verificarEstado(int num_personas, int dimension, double& potenci
 	uniform_real_distribution<double> distribution(0, 1);
 	double f;
 	int chequeados = 0;
-	int totalinfectados = 0, totalsanos=0, totalcurados = 0, totalmuertos=0;
+	int totalinfectados = 0, totalsanos=0, totalcurados = 0, totalmuertos=0, infectados=0;
 
 #pragma omp parallel for
 
@@ -152,24 +152,25 @@ void Simulador::verificarEstado(int num_personas, int dimension, double& potenci
 			for (auto &it: matriz[fila][col])
 			{
 				contaenfermos = 0;
-				if (it.estado == 0)		//Si está muerto
-					++totalmuertos;
-				if (it.estado == 2)		//Si está sano
-					++totalsanos;
+				//if (it.estado == 0)		//Si está muerto
+				//	++totalmuertos;
+				//if (it.estado == 2)		//Si está sano
+				//	++totalsanos;
 				if (it.estado == 3 )		//Si está infectado
 				{
-					++totalinfectados;
 					//this->enfermos+= totalinfectados;
 					//cout << "\n totalinfectados    :"<< totalinfectados;
+					++totalinfectados;
 					contaenfermos = 0;
+
 					
-					for (auto &it2 : matriz[fila][col])		//Ciclo para infectar los sanos
+					for (auto &it2 : matriz[fila][col])		//Ciclo para contar la cantidad de enfermos que hay en una celda
 					{
 						if (it2.estado == 3)
 							++contaenfermos;
-
+						/*if (it2.estado == 2)
+							++totalsanos;*/
 					}
-					//contaenfermos = contaenfermos - 1;
 			//		cout << "\n\nNueva potencia: " << potencia * contaenfermos <<" Conta: "<< contaenfermos<<" [ "<<fila<<"] ["<<col<<"] "<< endl << endl;
 					for (auto &it2 : matriz[fila][col])		//Ciclo para infectar los sanos
 					{
@@ -179,9 +180,11 @@ void Simulador::verificarEstado(int num_personas, int dimension, double& potenci
 						if (it2.estado == 2 && f < potencia*contaenfermos)		//Si está sano y el número generado es mayor igual al porcentaje
 						{
 							it2.set_estado(3);		//Se actualiza el estado de la persona a "INFECTADO"
-							this->enfermos= this->enfermos +1;
-							cout << "\nse infecta\n";
-							
+							//this->sanos = this->sanos - 1;
+							//--totalsanos;
+							cout << " se infecta ";
+							++infectados;
+							++totalinfectados;
 						}
 					}
 					//cout << "t: " << it.tiempo << endl;
@@ -193,13 +196,15 @@ void Simulador::verificarEstado(int num_personas, int dimension, double& potenci
 							it.set_estado(1);		//Se actualiza el estado de la persona a "INMUNE"
 							++totalcurados;
 							this->curados= this->curados+1;
-							cout << "\nse curo\n";
+							
+							cout << " se curo ";
 						}
 						else
 						{
 							it.set_estado(0);		//Se actualiza el estado de la persona a "MUERTO"
 							this->muertos = this->muertos + 1;
-							cout << "\nse muere\n";
+							++totalmuertos;
+							cout << " se muere ";
 							//this->muertos=this->muertos+1;
 						}
 						
@@ -211,22 +216,24 @@ void Simulador::verificarEstado(int num_personas, int dimension, double& potenci
 			}
 		}
 	}
+	cout << "TI: "<< totalinfectados<<endl;
+	this->enfermos = this->enfermos + infectados;
 	
-
 	//this->enfermos = totalinfectados;
 
 	/*cout << "\n this->curados " << this->curados;
 	cout << "\n this->sanos " << this->sanos;
 	cout << "\n this->muertos " << this->muertos;
 	cout << "\n this->enfermos " << this->enfermos;*/
-	Estadisticas(num_personas, totalmuertos, curados, totalsanos, totalinfectados, dias);
+	Estadisticas(num_personas, totalmuertos, totalcurados, totalsanos, totalinfectados, infectados, dias);
 }
 
 
-void Simulador::Estadisticas(int num_personas, int totalmuertos, int curados, int totalsanos, int totalinfectados , int dias)
+void Simulador::Estadisticas(int num_personas, int totalmuertos, int curados, int totalsanos, int totalinfectados , int infectados, int dias)
 {
 	cout << endl << endl << "\t------------------------------ Dia " << dias << " ------------------------------" << endl << endl;
-	cout	<< "\t\t\t\t Personas infectadas \n\t Porcentaje: " << 1.0*totalinfectados / num_personas	<< "\t\t\t Cantidad actual: " << totalinfectados << endl
+	cout	<< "\t\t\t\t Personas infectadas \n\t Porcentaje: " << 1.0* infectados / num_personas	<< "\t\t\t Cantidad actual: " <<infectados  << endl
+			<< "\n\t\t\t\t Total infectados \n\t Porcentaje: "	<< 1.0* totalinfectados / num_personas		<< "\t\t\t Cantidad actual: " << totalinfectados << endl
 			<< "\n\t\t\t\t Personas sanos \n\t Porcentaje : "	<< 1.0*totalsanos / num_personas		<< "\t\t\t Cantidad actual: " << totalsanos << endl
 			<< "\n\t\t\t\t Personas curados \n\t Porcentaje : " << 1.0*curados / num_personas			<< "\t\t\t Cantidad actual: " << curados << endl
 			<< "\n\t\t\t\t Personas muertas \n\t Porcentaje : " << 1.0*totalmuertos / num_personas		<< "\t\t\t Cantidad actual: " << totalmuertos << endl << endl;
@@ -235,7 +242,8 @@ void Simulador::Estadisticas(int num_personas, int totalmuertos, int curados, in
 	archivo.open("Estadisticas.txt", std::fstream::app);
 	archivo << endl << endl
 			<< "\t------------------------------ Dia " << dias << " ------------------------------" << endl << endl
-			<< "\t\t\t\t Personas infectadas \n\t Porcentaje: " << 1.0*totalinfectados / num_personas	<< "\t\t\t Cantidad actual: " << totalinfectados << endl
+			<< "\t\t\t\t Personas infectadas \n\t Porcentaje: " << 1.0*infectados / num_personas	<< "\t\t\t Cantidad actual: " <<infectados  << endl
+			<< "\n\t\t\t\t Total infectados \n\t Porcentaje: "	<< 1.0* totalinfectados/ num_personas		<< "\t\t\t Cantidad actual: " << totalinfectados << endl
 			<< "\n\t\t\t\t Personas sanos \n\t Porcentaje : "	<< 1.0*totalsanos / num_personas		<< "\t\t\t Cantidad actual: " << totalsanos << endl
 			<< "\n\t\t\t\t Personas curados \n\t Porcentaje : " << 1.0*curados / num_personas			<< "\t\t\t Cantidad actual: " << curados << endl
 			<< "\n\t\t\t\t Personas muertas \n\t Porcentaje : " << 1.0*totalmuertos / num_personas		<< "\t\t\t Cantidad actual: " << totalmuertos << endl << endl;
