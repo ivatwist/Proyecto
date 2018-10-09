@@ -58,6 +58,7 @@ void Simulador::llenar_Matriz(int dimension, int num_personas, double num_infect
 			if (n == 2)
 				this->sanos= this->sanos+1;
 		}
+		this->restantes = this->sanos;
 }
 
 /*
@@ -200,7 +201,7 @@ void Simulador::verificarEstado(int num_personas, int dimension, double& potenci
 						{
 							it2.set_estado(3);		//Se actualiza el estado de la persona a "INFECTADO"
 							++infectados;
-							cout << " se infecta ";
+						//	cout << " se infecta ";
 							
 						}
 					}
@@ -213,14 +214,14 @@ void Simulador::verificarEstado(int num_personas, int dimension, double& potenci
 							it.set_estado(1);		//Se actualiza el estado de la persona a "INMUNE"
 							++totalcurados;
 							this->curados= this->curados+1;
-							cout << " se curo ";
+						//	cout << " se curo ";
 						}
 						else
 						{
 							it.set_estado(0);		//Se actualiza el estado de la persona a "MUERTO"
 							this->muertos = this->muertos + 1;
 							++totalmuertos;
-							cout << " se muere ";
+						//	cout << " se muere ";
 							//this->muertos=this->muertos+1;
 						}
 						
@@ -233,6 +234,7 @@ void Simulador::verificarEstado(int num_personas, int dimension, double& potenci
 		}
 	}
 	this->enfermos = this->enfermos + infectados;
+	this->restantes -= infectados;
 	totalinfectados += infectados;
 	totalsanos -= infectados;
 
@@ -246,22 +248,22 @@ void Simulador::verificarEstado(int num_personas, int dimension, double& potenci
 
 void Simulador::Estadisticas(int num_personas, int totalmuertos, int curados, int totalsanos, int totalinfectados, int infectados, int dias)
 {
-	cout << endl << endl << "\t------------------------------ Dia " << dias << " ------------------------------" << endl << endl;
-	cout	<< "\t\t\t\t Personas infectadas \n\t Porcentaje: " << 1.0*infectados / num_personas	<< "\t\t\t Cantidad actual: " << infectados << endl
-			<< "\n\t\t\t\t Total infectadas \n\t Porcentaje: " << 1.0*totalinfectados / num_personas << "\t\t\t Cantidad actual: " << totalinfectados << endl
-			<< "\n\t\t\t\t Personas sanos \n\t Porcentaje : "	<< 1.0*totalsanos / num_personas		<< "\t\t\t Cantidad actual: " << totalsanos << endl
-			<< "\n\t\t\t\t Personas curados \n\t Porcentaje : " << 1.0*curados / num_personas			<< "\t\t\t Cantidad actual: " << curados << endl
-			<< "\n\t\t\t\t Personas muertas \n\t Porcentaje : " << 1.0*totalmuertos / num_personas		<< "\t\t\t Cantidad actual: " << totalmuertos << endl << endl;
+	cout << endl << endl << "     ------------------------------ Dia " << dias << " ------------------------------" << endl << endl;
+	cout	<< "\n\t\t\t   Personas infectadas \n\n\t Porcentaje: "	<< 1.0*infectados / num_personas		<< "\t\t\t\t Cantidad actual: " << infectados << endl
+			<< "\n\n\t\t\t    Total infectadas \n\n\t Porcentaje: "	<< 1.0*totalinfectados / num_personas	<< "\t\t\t\t Cantidad actual: " << totalinfectados << endl
+			<< "\n\n\t\t\t     Personas sanos \n\n\t Porcentaje : "	<< 1.0*totalsanos / num_personas		<< "\t\t\t\t Cantidad actual: " << totalsanos << endl
+			<< "\n\n\t\t\t    Personas curados \n\n\t Porcentaje : "<< 1.0*curados / num_personas			<< "\t\t\t\t Cantidad actual: " << curados << endl
+			<< "\n\n\t\t\t    Personas muertas \n\n\t Porcentaje : "<< 1.0*totalmuertos / num_personas		<< "\t\t\t\t Cantidad actual: " << totalmuertos << endl << endl;
 
 	ofstream archivo;
 	archivo.open("Estadisticas.txt", std::fstream::app);
 	archivo << endl << endl
 			<< "\t------------------------------ Dia " << dias << " ------------------------------" << endl << endl
-			<< "\t\t\t\t Total infectadas \n\t Porcentaje: " << 1.0*totalinfectados / num_personas << "\t\t\t Cantidad actual: " << totalinfectados << endl
-			<< "\n\t\t\t\t Personas infectadas \n\t Porcentaje: " << 1.0*totalinfectados / num_personas	<< "\t\t\t Cantidad actual: " << totalinfectados << endl
-			<< "\n\t\t\t\t Personas sanos \n\t Porcentaje : "	<< 1.0*totalsanos / num_personas		<< "\t\t\t Cantidad actual: " << totalsanos << endl
-			<< "\n\t\t\t\t Personas curados \n\t Porcentaje : " << 1.0*curados / num_personas			<< "\t\t\t Cantidad actual: " << curados << endl
-			<< "\n\t\t\t\t Personas muertas \n\t Porcentaje : " << 1.0*totalmuertos / num_personas		<< "\t\t\t Cantidad actual: " << totalmuertos << endl << endl;
+			<< "\n\t\t\t  Personas infectadas \n\n\t Porcentaje: "	<< 1.0*infectados / num_personas		<< "\t\t\t\t Cantidad actual: "	<< infectados << endl
+			<< "\n\n\t\t\t    Total infectadas \n\n\t Porcentaje: "	<< 1.0*totalinfectados / num_personas	<< "\t\t\t\t Cantidad actual: "	<< totalinfectados << endl
+			<< "\n\n\t\t\t     Personas sanos \n\n\t Porcentaje : "	<< 1.0*totalsanos / num_personas		<< "\t\t\t\t Cantidad actual: "	<< totalsanos << endl
+			<< "\n\n\t\t\t    Personas curados \n\n\t Porcentaje : "<< 1.0*curados / num_personas			<< "\t\t\t\t Cantidad actual: "	<< curados << endl
+			<< "\n\n\t\t\t    Personas muertas \n\n\t Porcentaje : "<< 1.0*totalmuertos / num_personas		<< "\t\t\t\t Cantidad actual: "	<< totalmuertos << endl << endl;
 	archivo.close();
 
 }
@@ -270,21 +272,23 @@ void Simulador::Estadisticas(int num_personas, int totalmuertos, int curados, in
 //metodo para imprimir las estadisticas finales, este metodo lo que hace es decir cuantas personas infectadas, sanas, curadas y muertas han habido en total en todos los tics
 void Simulador::EstadisticasFinales(int num_personas)
 {
-	cout << "\t-------------------------------------------------------------------" << endl << endl;
-	cout << "\n\n\n\t\t\t\t ESTADISTICAS FINALES" << endl << endl;
-	cout << "\t\t\t\t Personas infectadas \n\t Porcentaje: " << 1.0*this->enfermos / num_personas << "\t\t\t Cantidad total: " << this->enfermos << endl
-		<< "\n\t\t\t\t Personas sanos \n\t Porcentaje : " << 1.0*this->sanos / num_personas << "\t\t\t Cantidad total: " << this->sanos << endl
-		<< "\n\t\t\t\t Personas curados \n\t Porcentaje : " << 1.0*this->curados / num_personas << "\t\t\t Cantidad total: " << this->curados<< endl
-		<< "\n\t\t\t\t Personas muertas \n\t Porcentaje : " << 1.0*this->muertos / num_personas << "\t\t\t Cantidad total: " << this->muertos << endl << endl;
+	cout << "     -------------------------------------------------------------------" << endl << endl;
+	cout << "\n\n\n\t\t\t ESTADISTICAS FINALES" << endl << endl;
+	cout << "\n\t\t\t  Personas infectadas \n\n\t Porcentaje: "		<< 1.0*this->enfermos / num_personas	<< "\t\t\t Cantidad total: "	<< this->enfermos << endl
+		 << "\n\n\t\t\t     Personas sanos \n\n\t Porcentaje : "	<< 1.0*this->sanos / num_personas		<< "\t\t\t Cantidad total: "	<< this->sanos << endl
+		 << "\n\n\t\t\t    Sanos Restantes \n\n\t Porcentaje : "	<< 1.0*this->restantes / num_personas	<< "\t\t\t Cantidad total: "	<< this->restantes << endl
+		 << "\n\n\t\t\t    Personas curados \n\n\t Porcentaje : "	<< 1.0*this->curados / num_personas		<< "\t\t\t Cantidad total: "	<< this->curados<< endl
+		 << "\n\n\t\t\t    Personas muertas \n\n\t Porcentaje : "	<< 1.0*this->muertos / num_personas		<< "\t\t\t Cantidad total: "	<< this->muertos << endl << endl;
 
 	ofstream archivo;
 	archivo.open("Estadisticas.txt", std::fstream::app);
 	archivo << "\t-------------------------------------------------------------------" << endl << endl
-		<< "\n\n\t\t\t\t ESTADISTICAS FINALES" << endl << endl
-		<< "\t\t\t\t Personas infectadas \n\t Porcentaje: " << 1.0*this->enfermos / num_personas << "\t\t\t Cantidad total: " << this->enfermos << endl
-		<< "\n\t\t\t\t Personas sanos \n\t Porcentaje : " << 1.0*this->sanos / num_personas << "\t\t\t Cantidad total: " << this->sanos << endl
-		<< "\n\t\t\t\t Personas curados \n\t Porcentaje : " << 1.0*this->curados / num_personas << "\t\t\t Cantidad total: " << this->curados << endl
-		<< "\n\t\t\t\t Personas muertas \n\t Porcentaje : " << 1.0*this->muertos / num_personas << "\t\t\t Cantidad total: " << this->muertos << endl << endl;
+			<< "\n\n\t\t\t\t ESTADISTICAS FINALES" << endl << endl
+			<< "\n\t\t\t  Personas infectadas \n\n\t Porcentaje: "	<< 1.0*this->enfermos / num_personas	<< "\t\t\t Cantidad total: "	<< this->enfermos << endl
+			<< "\n\n\t\t\t    Sanos Iniciales \n\n\t Porcentaje : "	<< 1.0*this->sanos / num_personas		<< "\t\t\t Cantidad total: "	<< this->sanos << endl
+			<< "\n\n\t\t\t    Sanos Restantes \n\n\t Porcentaje : " << 1.0*this->restantes / num_personas	<< "\t\t\t Cantidad total: "	<< this->restantes << endl
+			<< "\n\n\t\t\t    Personas curados \n\n\t Porcentaje : "<< 1.0*this->curados / num_personas		<< "\t\t\t Cantidad total: "	<< this->curados << endl
+			<< "\n\n\t\t\t    Personas muertas \n\n\t Porcentaje : "<< 1.0*this->muertos / num_personas		<< "\t\t\t Cantidad total: "	<< this->muertos << endl << endl;
 	archivo.close();
 }
 
