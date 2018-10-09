@@ -22,7 +22,7 @@ class Simulador
 public:
 	list<Persona> personas;
 	vector<vector<list<Persona>>> matriz;
-	int sanos=0, muertos = 0, curados = 0, enfermos = 0;
+	int sanos = 0, muertos = 0, curados = 0, enfermos = 0, restantes = 0;
 
 
 	Simulador();

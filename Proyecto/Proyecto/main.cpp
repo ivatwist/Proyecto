@@ -79,6 +79,9 @@ int main()
 		m1.muertos = m2->muertos;
 		delete m2;
 	}
+	if(m1.enfermos)
+		m1.verificarEstado(num_personas, dimension, potencia, muerte, recuperacion, tics+1);
+
 	/**Imprimir estadisticas finales y matar a todos los infectados*/
 	
 	
